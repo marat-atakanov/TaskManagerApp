@@ -32,7 +32,6 @@ const getTasks = async () => {
 
 const createTags = (task) => {
 
-    // Creating the tags
     const div = document.createElement("div")
     div.classList.add("task")
 
@@ -57,6 +56,9 @@ const createTags = (task) => {
     const newText = document.createElement("input")
     newText.classList.add("newText")
     newText.placeholder = "New task"
+    newText.oninput = () => {
+        newText.style.borderColor = "black"
+    }
 
     const newTextSubmit = document.createElement("button")
     newTextSubmit.classList.add("newTextSubmit")
@@ -71,10 +73,14 @@ const createTags = (task) => {
     editBtn.onclick = async () => {
         editText.classList.remove("hide")
         newTextSubmit.onclick = async () => {
-            const editedTask = await edit(task.id, newText.value)
-            text.innerHTML = editedTask.text
-            newText.value = ""
-            editText.classList.add("hide")
+            if (newText.value !== "") {
+                const editedTask = await edit(task.id, newText.value)
+                text.innerHTML = editedTask.text
+                newText.value = ""
+                editText.classList.add("hide")
+            } else {
+                newText.style.borderColor = "red"
+            }
         }
     }
 
@@ -200,6 +206,7 @@ completedBtn.onclick = async () => {
     const filteredTasks = await filterTasks("true")
     await filteredTasks.forEach(task => createTags(task))
 }
+
 uncompletedBtn.onclick = async () => {
     tasks.innerHTML = null
     const filteredTasks = await filterTasks("false")
